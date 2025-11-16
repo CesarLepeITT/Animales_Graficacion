@@ -1,0 +1,1 @@
+# Class than shows the animal card

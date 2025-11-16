@@ -1,0 +1,1 @@
+# Class for the window than shows te animal details

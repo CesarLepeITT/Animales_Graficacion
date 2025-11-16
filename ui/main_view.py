@@ -1,0 +1,1 @@
+# Principal Class than defines the window of the app and the main structure
