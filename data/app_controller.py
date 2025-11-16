@@ -72,7 +72,7 @@ class AppController:
         """
         search_term_lower = search_term.lower().strip()
         
-        if not search_term_lower:
+        if not search_term_lower or search_term == '':
             # Si no hay búsqueda, llamamos a la lógica original (o una versión optimizada)
             # Por simplicidad, devolvemos todo agrupado
             all_data = {}
