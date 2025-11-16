@@ -121,7 +121,7 @@ class AnimalCard(ttk.Frame):
         try:
             # Intentar cargar la imagen real
             name_img = self.controller.load_img_name(self.animal_data['id'])
-            path_img_animal = os.path.join(os.getcwd(), 'ui', name_img)
+            path_img_animal = os.path.join(os.getcwd(), 'img', name_img)
             return MainView._load_image(path_img_animal, size=(100, 100))
         except Exception as e:
             # Fallback si el controlador o la imagen fallan (para testing)
@@ -223,8 +223,10 @@ class DetailPanel(ttk.Frame):
         self.info_label_description.config(text=animal_data.get('descripcion', 'N/A'))
 
         # Cargar modelo 3D
-        obj_path = animal_data.get('obj_file') 
-        
+        obj_name = animal_data.get('ruta_modelo_3d') 
+        obj_path = os.path.join(os.getcwd(), 'models', obj_name)
+
+
         if obj_path and os.path.exists(obj_path):
             self.load_model(obj_path)
         elif obj_path:
@@ -411,7 +413,6 @@ class MainView(tk.Tk):
         # 7. Mostrar la vista de lista al inicio
         self.show_list_view()
 
-    # --- MODIFICACIÓN: _create_sidebar (revertido) ---
     def _create_sidebar(self, parent):
         """
         Crea el menú lateral (SOLO con la búsqueda).
@@ -480,7 +481,6 @@ class MainView(tk.Tk):
              print("Controlador no inicializado.")
              return
              
-        # Si 'data_to_display' es None, cargar todos los estados iniciales
         if data_to_display is None:
             try:
                 states = self.controller.load_initial_states()
@@ -513,12 +513,11 @@ class MainView(tk.Tk):
             cards_wrapper_frame.pack() 
             
             for animal in animals:
-                # --- MODIFICACIÓN: Pasar 'self' (MainView) a la AnimalCard ---
                 animal_card = AnimalCard(
                     cards_wrapper_frame, 
                     self.controller, 
                     animal,
-                    self  # <-- ¡Referencia a MainView!
+                    self  
                 )
                 animal_card.pack(side=tk.LEFT, fill=tk.Y, padx=5, pady=5)
     
