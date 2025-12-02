@@ -3,6 +3,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import os
 import numpy as np # Necesario para el panel 3D
+import pyvista as pv
 
 # --- Importaciones para 3D ---
 try:
@@ -121,7 +122,7 @@ class AnimalCard(ttk.Frame):
         try:
             # Intentar cargar la imagen real
             name_img = self.controller.load_img_name(self.animal_data['id'])
-            path_img_animal = os.path.join(os.getcwd(), 'img', name_img)
+            path_img_animal = os.path.join(os.getcwd(), name_img)
             return MainView._load_image(path_img_animal, size=(100, 100))
         except Exception as e:
             # Fallback si el controlador o la imagen fallan (para testing)
@@ -171,159 +172,214 @@ class AnimalCard(ttk.Frame):
 # --- Clase Panel Detallado ---
 class DetailPanel(ttk.Frame):
     """
-    Un Frame de Tkinter que carga y muestra un archivo .obj y otros detalles.
+    Panel que utiliza PyVista (VTK) para manejar modelos de Alta Resolución con Texturas PBR.
     """
-    # --- MODIFICACIÓN: Recibe 'main_view' ---
     def __init__(self, parent, main_view, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.main_view = main_view 
+        self.current_mesh = None 
+        self.texture_paths = {} # Diccionario para guardar las texturas cargadas
         
-        self.figure = None
-        self.canvas = None
-        self.toolbar = None
-        
-        # Frame para el modelo 3D
-        self.model_frame = ttk.Frame(self, style='TFrame') 
-        self.model_frame.pack(fill=tk.BOTH, expand=True)
+        # --- Layout Principal (Igual que antes) ---
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(1, weight=1)
 
-        # Frame para la información (puedes añadir más aquí)
+        # 1. Header
         self.info_frame = ttk.Frame(self, padding=10, style='TFrame') 
-        self.info_frame.pack(fill=tk.X)
+        self.info_frame.grid(row=0, column=0, sticky="ew")
 
-        # Boton volver
-        self.back_button = ttk.Button(
-            self.info_frame, 
-            text="< Volver a la lista", 
-            command=self.main_view.show_list_view 
-        )
-        self.back_button.pack(side=tk.LEFT, anchor='nw', padx=5, pady=5)
+        self.back_button = ttk.Button(self.info_frame, text="< Volver a la lista", command=self.main_view.show_list_view)
+        self.back_button.pack(side=tk.LEFT, anchor='nw')
 
-        # Frame para etiquetas
         self.info_labels_frame = ttk.Frame(self.info_frame, style='TFrame')
-        self.info_labels_frame.pack(fill=tk.X, expand=True)
+        self.info_labels_frame.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=20)
 
-        # --- Etiquetas para la info ---
-        self.info_label_common = ttk.Label(self.info_labels_frame, text="", font=("arial", 20, "bold"), style='TLabel', anchor='center')
-        self.info_label_common.pack(fill=tk.X, pady=(0,5))
-        self.info_label_scientific = ttk.Label(self.info_labels_frame, text="", font=("arial", 16), style='TLabel', anchor='center')
-        self.info_label_scientific.pack(fill=tk.X)
+        self.lbl_comun = ttk.Label(self.info_labels_frame, text="", font=("arial", 18, "bold"), style='TLabel')
+        self.lbl_comun.pack(anchor='w')
+        self.lbl_cientifico = ttk.Label(self.info_labels_frame, text="", font=("arial", 12, "italic"), style='TLabel')
+        self.lbl_cientifico.pack(anchor='w')
 
-        ttk.Label(self.info_labels_frame, text="Descripcion", font=("arial", 20, "bold"), style='TLabel', anchor='center').pack(fill=tk.X)
-        self.info_label_description = ttk.Label(self.info_labels_frame, text="", font=("arial", 16), style='TLabel', anchor='center')
-        self.info_label_description.pack(fill=tk.X)
+        # 2. Área de Visualización
+        self.viz_frame = ttk.Frame(self, style='Gray.TFrame')
+        self.viz_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=5)
+        self.viz_frame.columnconfigure(0, weight=1)
+        self.viz_frame.rowconfigure(0, weight=1)
 
+        self.preview_label = ttk.Label(self.viz_frame, text="Cargando...", anchor="center", style='TLabel')
+        self.preview_label.grid(row=0, column=0, sticky="nsew", padx=1, pady=1)
 
+        # 3. Botón Interactivo
+        self.btn_open_3d = ttk.Button(
+            self.viz_frame, 
+            text="ABRIR VISOR 3D", 
+            command=self.open_interactive_viewer,
+            state="disabled"
+        )
+        self.btn_open_3d.grid(row=1, column=0, sticky="ew", padx=10, pady=10)
+
+        # 4. Descripción
+        self.desc_frame = ttk.Frame(self, padding=10, style='TFrame')
+        self.desc_frame.grid(row=2, column=0, sticky="ew")
+        
+        # Aumenté el título a tamaño 16
+        ttk.Label(
+            self.desc_frame, 
+            text="Descripción:", 
+            font=("arial", 16, "bold"), 
+            style='TLabel'
+        ).pack(anchor='w')
+        
+        # Aumenté el texto del cuerpo a tamaño 14
+        self.lbl_desc = ttk.Label(
+            self.desc_frame, 
+            text="", 
+            wraplength=1000, # Aumenté un poco el ancho de envoltura para que aproveche el espacio
+            font=("arial", 14), # <--- AQUÍ ESTÁ EL CAMBIO IMPORTANTE
+            style='TLabel'
+        )
+        self.lbl_desc.pack(fill=tk.X)
 
     def load_animal_data(self, animal_data):
-        """Carga todos los datos del animal en el panel."""
-        
-        # Actualizar etiquetas de texto
-        self.info_label_common.config(text=animal_data.get('nombre_comun', 'N/A'))
-        self.info_label_scientific.config(text=animal_data.get('nombre_cientifico', 'N/A'))
-        self.info_label_description.config(text=animal_data.get('descripcion', 'N/A'))
+        # Resetear UI
+        self.lbl_comun.config(text=animal_data.get('nombre_comun', 'N/A'))
+        self.lbl_cientifico.config(text=animal_data.get('nombre_cientifico', 'N/A'))
+        self.lbl_desc.config(text=animal_data.get('descripcion', 'N/A'))
+        self.preview_label.config(image='', text="Cargando vista previa...")
+        self.btn_open_3d.config(state="disabled")
+        self.current_mesh = None
+        self.texture_paths = {} # Limpiar texturas anteriores
 
-        # Cargar modelo 3D
         obj_name = animal_data.get('ruta_modelo_3d') 
-        obj_path = os.path.join(os.getcwd(), 'models', obj_name)
-
-
-        if obj_path and os.path.exists(obj_path):
-            self.load_model(obj_path)
-        elif obj_path:
-            print(f"No se encontró el archivo .obj en la ruta: {obj_path}")
-            self.show_error(f"No se encontró: {obj_path}")
-        else:
-            print(f"No hay archivo .obj definido para {animal_data['nombre_comun']}")
-            self.show_error(f"No hay modelo 3D para {animal_data['nombre_comun']}")
-
-
-    def load_model(self, filepath):
-        """
-        Carga un modelo .obj y lo muestra en el frame.
-        """
-        if not os.path.exists(filepath):
-            print(f"Error: No se encontró el archivo {filepath}")
-            self.show_error(f"No se encontró el archivo: {filepath}")
+        if not obj_name:
+            self.preview_label.config(text="No hay modelo 3D asignado.")
             return
-            
-        # 1. Limpiar el frame de widgets anteriores
-        self._clear_widgets()
 
+        obj_path = os.path.join(os.getcwd(), obj_name)
+        if not os.path.exists(obj_path):
+            self.preview_label.config(text=f"Archivo no encontrado: {obj_name}")
+            return
+
+        # Cargar asíncronamente
+        self.after(50, lambda: self._load_pyvista_mesh(obj_path))
+
+    def _get_textures_from_folder(self, obj_path):
+        """
+        Busca automáticamente texturas en la misma carpeta del OBJ.
+        Asume que las texturas contienen palabras clave como 'base', 'metallic', etc.
+        """
+        folder = os.path.dirname(obj_path)
+        textures = {
+            "base": None,
+            "metallic": None,
+            "roughness": None,
+            "normal": None
+        }
+        
+        # Escanear archivos en la carpeta
         try:
-            # 2. Leer el archivo .obj usando meshio
-            mesh = meshio.read(filepath)
-            points = mesh.points
+            for file in os.listdir(folder):
+                full_path = os.path.join(folder, file)
+                if not os.path.isfile(full_path): continue
+                
+                filename_lower = file.lower()
+                
+                # Lógica simple de detección por nombre
+                # Ajusta estas palabras clave según tus nombres de archivo reales
+                if "base" in filename_lower or "color" in filename_lower or "diffuse" in filename_lower:
+                    textures["base"] = pv.read_texture(full_path)
+                elif "metallic" in filename_lower or "metal" in filename_lower:
+                    textures["metallic"] = pv.read_texture(full_path)
+                elif "roughness" in filename_lower or "rough" in filename_lower:
+                    textures["roughness"] = pv.read_texture(full_path)
+                elif "normal" in filename_lower:
+                    textures["normal"] = pv.read_texture(full_path)
+        except Exception as e:
+            print(f"Advertencia buscando texturas: {e}")
             
-            if 'triangle' not in mesh.cells_dict:
-                if 'quad' in mesh.cells_dict:
-                     quads = mesh.cells_dict['quad']
-                     tri1 = quads[:, [0, 1, 2]]
-                     tri2 = quads[:, [0, 2, 3]]
-                     cells = np.vstack([tri1, tri2])
-                else:
-                    print("Error: No se encontraron 'triangle' o 'quad' en las celdas del mesh.")
-                    self.show_error("El modelo .obj no tiene una malla compatible.")
-                    return
+        return textures
+
+    def _load_pyvista_mesh(self, obj_path):
+        try:
+            self.current_mesh = pv.read(obj_path)
+            
+            # Cargar texturas
+            self.loaded_textures = self._get_textures_from_folder(obj_path)
+            
+            # Crear captura de pantalla (Preview simple, solo color base)
+            plotter = pv.Plotter(off_screen=True, window_size=[600, 400])
+            plotter.set_background("#f7f7f7")
+            
+            # Para la preview estática, usamos solo el color base si existe, o blanco por defecto
+            if self.loaded_textures["base"]:
+                plotter.add_mesh(self.current_mesh, texture=self.loaded_textures["base"])
             else:
-                cells = mesh.cells_dict['triangle']
-
-            x, y, z = points[:, 0], points[:, 1], points[:, 2]
-
-            # 3. Crear la figura de Matplotlib
-            self.figure = plt.figure(figsize=(5, 4))
-            self.figure.patch.set_facecolor('#f7f7f7') 
+                plotter.add_mesh(self.current_mesh, color="white")
+                
+            plotter.view_isometric()
             
-            ax = self.figure.add_subplot(111, projection='3d')
-            ax.set_facecolor('#f7f7f7')
-            ax.plot_trisurf(x, y, z, triangles=cells, cmap='viridis', edgecolor='none')
-            self._auto_scale_axes(ax, x, y, z)
+            img_array = plotter.screenshot(None, return_img=True)
+            plotter.close()
 
-            # 5. Incrustar la figura de Matplotlib en Tkinter
-            self.canvas = FigureCanvasTkAgg(self.figure, master=self.model_frame)
-            self.canvas.draw()
-            self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+            image = Image.fromarray(img_array)
+            self.photo = ImageTk.PhotoImage(image)
 
-            # 6. Añadir la barra de herramientas de navegación
-            self.toolbar = NavigationToolbar2Tk(self.canvas, self.model_frame)
-            self.toolbar.update()
-            # No empaquetes la barra de herramientas si no la quieres visible
-            # self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+            self.preview_label.config(image=self.photo, text="")
+            self.btn_open_3d.config(state="normal")
+            print(f"Modelo cargado: {self.current_mesh.n_points} vértices.")
 
         except Exception as e:
-            print(f"Error cargando el modelo: {e}")
-            self.show_error(f"Error al cargar el modelo:\n{e}")
+            print(f"Error PyVista: {e}")
+            self.preview_label.config(text=f"Error cargando modelo:\n{e}")
 
-    def show_error(self, message):
-        """Muestra un mensaje de error en el panel."""
-        self._clear_widgets()
-        self.label = ttk.Label(self.model_frame, text=message, foreground="red", style='TLabel') # Aplicar estilo
-        self.label.pack(pady=20, padx=20)
+    def open_interactive_viewer(self):
+        print("--- Intentando abrir visor 3D ---")
+        if not self.current_mesh:
+            return
 
-    def _clear_widgets(self):
-        """Destruye todos los widgets hijos del frame del modelo."""
-        for widget in self.model_frame.winfo_children():
-            widget.destroy()
-        
-        # Cerrar la figura de matplotlib para liberar memoria
-        if self.figure:
-            plt.close(self.figure)
+        try:
+            p = pv.Plotter()
+            p.add_text("Presiona 'q' para cerrar", font_size=12)
             
-        self.figure = None
-        self.canvas = None
-        self.toolbar = None
+            # Detectar si tenemos texturas PBR
+            use_pbr = False
+            if self.loaded_textures.get("metallic") or self.loaded_textures.get("roughness"):
+                use_pbr = True
 
-    def _auto_scale_axes(self, ax, x, y, z):
-        """Ajusta los límites de los ejes para que el modelo no se vea deformado."""
-        max_range = np.array([x.max()-x.min(), y.max()-y.min(), z.max()-z.min()]).max() / 2.0
-        if max_range == 0: max_range = 1.0 # Evitar división por cero si es un punto
+            # Intentamos añadir la malla con argumentos PBR
+            try:
+                p.add_mesh(
+                    self.current_mesh,
+                    texture=self.loaded_textures.get("base"),
+                    metallic_texture=self.loaded_textures.get("metallic"),
+                    roughness_texture=self.loaded_textures.get("roughness"),
+                    normal_texture=self.loaded_textures.get("normal"),
+                    pbr=use_pbr,
+                    # Fallbacks numéricos por si faltan texturas pero activamos PBR
+                    metallic=1.0 if (use_pbr and not self.loaded_textures.get("metallic")) else None,
+                    roughness=0.5 if (use_pbr and not self.loaded_textures.get("roughness")) else None
+                )
+                # Si pasa esta línea, PBR funciona. Añadimos luz para que se vea bien.
+                if use_pbr:
+                     p.add_light(pv.Light(position=(10, 10, 10), intensity=0.8))
 
-        mid_x = (x.max()+x.min()) * 0.5
-        mid_y = (y.max()+y.min()) * 0.5
-        mid_z = (z.max()+z.min()) * 0.5
-        
-        ax.set_xlim(mid_x - max_range, mid_x + max_range)
-        ax.set_ylim(mid_y - max_range, mid_y + max_range)
-        ax.set_zlim(mid_z - max_range, mid_z + max_range)
+            except TypeError:
+                # --- BLOQUE DE SEGURIDAD PARA VERSIONES ANTIGUAS ---
+                print("ADVERTENCIA: Tu versión de PyVista no soporta PBR. Cargando modo simple.")
+                p.clear() # Limpiamos por si acaso
+                p.add_text("Modo Compatibilidad (Sin PBR)", font_size=10, position='upper_left')
+                
+                # Carga estándar (Solo textura base o color blanco)
+                if self.loaded_textures.get("base"):
+                    p.add_mesh(self.current_mesh, texture=self.loaded_textures.get("base"))
+                else:
+                    p.add_mesh(self.current_mesh, color="white")
+
+            p.show()
+
+        except Exception as e:
+            print(f"ERROR CRÍTICO: {e}")
+            import traceback
+            traceback.print_exc()
 
 
 # --- Clase Principal de la Vista ---

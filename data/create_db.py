@@ -75,39 +75,39 @@ try:
 
     # --- 3. Insertar Animales (Simulados) ---
     
-    print("Insertando animales (5 por estado)...")
-    animales_para_insertar = []
+    #print("Insertando animales (5 por estado)...")
+    #animales_para_insertar = []
     
     # Para la simulación, volvemos a consultar los estados para obtener sus IDs
-    cursor.execute("SELECT id, nombre FROM estados")
-    estados_con_id = cursor.fetchall() # Lista de tuplas (id, nombre)
+    #cursor.execute("SELECT id, nombre FROM estados")
+    #estados_con_id = cursor.fetchall() # Lista de tuplas (id, nombre)
     
-    animal_id_counter = 1
-    for estado_id, estado_nombre in estados_con_id:
-        for i in range(5): # 5 animales por estado
-            nombre_comun = f"Animal de {estado_nombre} #{i+1}"
-            nombre_cientifico = f"Genus species {animal_id_counter}"
-            
-            # (nombre_comun, nombre_cientifico, descripcion, modelo, img, estado_id)
-            animal_tupla = (
-                nombre_comun,
-                nombre_cientifico,
-                f"Descripción para {nombre_comun}. {descripcion_larga}",
-                f'null.obj',
-                f'null.jpg',
-                estado_id  # Usamos el ID del estado
-            )
-            animales_para_insertar.append(animal_tupla)
-            animal_id_counter += 1
+    #animal_id_counter = 1
+    #for estado_id, estado_nombre in estados_con_id:
+    #    for i in range(5): # 5 animales por estado
+    #        nombre_comun = f"Animal de {estado_nombre} #{i+1}"
+    #        nombre_cientifico = f"Genus species {animal_id_counter}"
+    #        
+    #        # (nombre_comun, nombre_cientifico, descripcion, modelo, img, estado_id)
+    #        animal_tupla = (
+    #            nombre_comun,
+    #            nombre_cientifico,
+    #            f"Descripción para {nombre_comun}. {descripcion_larga}",
+    #            f'null.obj',
+    #            f'null.jpg',
+    #            estado_id  # Usamos el ID del estado
+    #        )
+    #        animales_para_insertar.append(animal_tupla)
+    #        animal_id_counter += 1
 
     # Insertar todos los animales de golpe
-    cursor.executemany('''
-        INSERT INTO animales 
-        (nombre_comun, nombre_cientifico, descripcion, ruta_modelo_3d, ruta_img, estado_id) 
-        VALUES (?, ?, ?, ?, ?, ?)
-    ''', animales_para_insertar)
+    #cursor.executemany('''
+    #    INSERT INTO animales 
+    #    (nombre_comun, nombre_cientifico, descripcion, ruta_modelo_3d, ruta_img, estado_id) 
+    #    VALUES (?, ?, ?, ?, ?, ?)
+    #''', animales_para_insertar)
 
-    print(f"Insertados {len(animales_para_insertar)} animales.")
+    #print(f"Insertados {len(animales_para_insertar)} animales.")
 
     # --- 4. Guardar y Cerrar ---
     conn.commit()
