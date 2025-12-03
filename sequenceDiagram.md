@@ -33,4 +33,4 @@ sequenceDiagram
 
     Usuario->>DetailPanel: Clic botón "ABRIR VISOR 3D"
     DetailPanel->>PyVista: Crear e iniciar Plotter Interactivo (show)
-    PyVista-->>Usuario: Abre Ventana 3D Interactiva```
+    PyVista-->>Usuario: Abre Ventana 3D Interactiva
