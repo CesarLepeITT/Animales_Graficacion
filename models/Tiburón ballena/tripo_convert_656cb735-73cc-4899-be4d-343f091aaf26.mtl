@@ -1,0 +1,16 @@
+# Blender 4.5.2 LTS MTL File: 'tripo_656cb735-73cc-4899-be4d-343f091aaf26.blend'
+# www.blender.org
+
+newmtl tripo_mat_656cb735-73cc-4899-be4d-343f091aaf26
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd whaleshark3dmodel_basecolor.JPEG
+map_Ns whaleshark3dmodel_roughness.JPEG
+map_Pr whaleshark3dmodel_roughness.JPEG
+map_refl whaleshark3dmodel_metallic.JPEG
+map_Pm whaleshark3dmodel_metallic.JPEG
+map_Bump -bm 1.000000 whaleshark3dmodel_normal.JPEG

@@ -1,0 +1,16 @@
+# Blender 4.5.0 MTL File: 'None'
+# www.blender.org
+
+newmtl tripo_mat_c4aba711-dc56-4fbc-8da8-0f58651ae8a6
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd tapir_basecolor.JPEG
+map_Ns tapir_roughness.JPEG
+map_Pr tapir_roughness.JPEG
+map_refl tapir_metallic.JPEG
+map_Pm tapir_metallic.JPEG
+map_Bump -bm 1.000000 tapir_normal.JPEG

@@ -1,0 +1,16 @@
+# Blender 4.5.2 LTS MTL File: 'None'
+# www.blender.org
+
+newmtl tripo_mat_20575725-d964-4522-af34-5696ec14b229
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd wolf3dmodel_basecolor.JPEG
+map_Ns wolf3dmodel_roughness.JPEG
+map_Pr wolf3dmodel_roughness.JPEG
+map_refl wolf3dmodel_metallic.JPEG
+map_Pm wolf3dmodel_metallic.JPEG
+map_Bump -bm 1.000000 wolf3dmodel_normal.JPEG

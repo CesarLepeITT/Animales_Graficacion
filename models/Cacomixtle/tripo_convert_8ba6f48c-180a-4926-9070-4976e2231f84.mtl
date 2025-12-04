@@ -1,0 +1,16 @@
+# Blender 4.5.0 MTL File: 'None'
+# www.blender.org
+
+newmtl tripo_mat_8ba6f48c-180a-4926-9070-4976e2231f84
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd pinkaxolotl3dmodel_basecolor.JPEG
+map_Ns pinkaxolotl3dmodel_roughness.JPEG
+map_Pr pinkaxolotl3dmodel_roughness.JPEG
+map_refl pinkaxolotl3dmodel_metallic.JPEG
+map_Pm pinkaxolotl3dmodel_metallic.JPEG
+map_Bump -bm 1.000000 pinkaxolotl3dmodel_normal.JPEG

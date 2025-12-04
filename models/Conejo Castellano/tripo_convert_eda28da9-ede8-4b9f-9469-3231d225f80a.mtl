@@ -1,0 +1,16 @@
+# Blender 4.5.0 MTL File: 'None'
+# www.blender.org
+
+newmtl tripo_mat_eda28da9-ede8-4b9f-9469-3231d225f80a
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd rabbit3dmodel_basecolor.JPEG
+map_Ns rabbit3dmodel_roughness.JPEG
+map_Pr rabbit3dmodel_roughness.JPEG
+map_refl rabbit3dmodel_metallic.JPEG
+map_Pm rabbit3dmodel_metallic.JPEG
+map_Bump -bm 1.000000 rabbit3dmodel_normal.JPEG

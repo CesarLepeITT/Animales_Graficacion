@@ -1,0 +1,16 @@
+# Blender 4.5.0 MTL File: 'None'
+# www.blender.org
+
+newmtl tripo_mat_19db8518-6c0d-4d89-89aa-4cff58b8c18d
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd flyinghawk3dmodel_basecolor.JPEG
+map_Ns flyinghawk3dmodel_roughness.JPEG
+map_Pr flyinghawk3dmodel_roughness.JPEG
+map_refl flyinghawk3dmodel_metallic.JPEG
+map_Pm flyinghawk3dmodel_metallic.JPEG
+map_Bump -bm 1.000000 flyinghawk3dmodel_normal.JPEG

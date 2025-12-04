@@ -1,0 +1,16 @@
+# Blender 4.5.0 MTL File: 'None'
+# www.blender.org
+
+newmtl tripo_mat_9ce10f89-5a9f-4f70-904b-52db7ca428dd
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd white-taileddeer3dmodel_basecolor.JPEG
+map_Ns white-taileddeer3dmodel_roughness.JPEG
+map_Pr white-taileddeer3dmodel_roughness.JPEG
+map_refl white-taileddeer3dmodel_metallic.JPEG
+map_Pm white-taileddeer3dmodel_metallic.JPEG
+map_Bump -bm 1.000000 white-taileddeer3dmodel_normal.JPEG

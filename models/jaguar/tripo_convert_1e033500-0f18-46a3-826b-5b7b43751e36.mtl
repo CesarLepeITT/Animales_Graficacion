@@ -1,0 +1,16 @@
+# Blender 4.5.0 MTL File: 'None'
+# www.blender.org
+
+newmtl tripo_mat_1e033500-0f18-46a3-826b-5b7b43751e36
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd jaguar3dmodel_basecolor.JPEG
+map_Ns jaguar3dmodel_roughness.JPEG
+map_Pr jaguar3dmodel_roughness.JPEG
+map_refl jaguar3dmodel_metallic.JPEG
+map_Pm jaguar3dmodel_metallic.JPEG
+map_Bump -bm 1.000000 jaguar3dmodel_normal.JPEG

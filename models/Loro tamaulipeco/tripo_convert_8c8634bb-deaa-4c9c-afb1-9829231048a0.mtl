@@ -1,0 +1,16 @@
+# Blender 4.5.2 LTS MTL File: 'tripo_8c8634bb-deaa-4c9c-afb1-9829231048a0.blend'
+# www.blender.org
+
+newmtl tripo_mat_8c8634bb-deaa-4c9c-afb1-9829231048a0
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd greenmacaw3dmodel_basecolor.JPEG
+map_Ns greenmacaw3dmodel_roughness.JPEG
+map_Pr greenmacaw3dmodel_roughness.JPEG
+map_refl greenmacaw3dmodel_metallic.JPEG
+map_Pm greenmacaw3dmodel_metallic.JPEG
+map_Bump -bm 1.000000 greenmacaw3dmodel_normal.JPEG

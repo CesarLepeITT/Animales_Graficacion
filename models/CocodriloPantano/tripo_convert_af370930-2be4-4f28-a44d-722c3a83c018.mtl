@@ -1,0 +1,16 @@
+# Blender 4.5.0 MTL File: 'None'
+# www.blender.org
+
+newmtl tripo_mat_af370930-2be4-4f28-a44d-722c3a83c018
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd crocodile3dmodel_basecolor.JPEG
+map_Ns crocodile3dmodel_roughness.JPEG
+map_Pr crocodile3dmodel_roughness.JPEG
+map_refl crocodile3dmodel_metallic.JPEG
+map_Pm crocodile3dmodel_metallic.JPEG
+map_Bump -bm 1.000000 crocodile3dmodel_normal.JPEG

@@ -366,7 +366,7 @@ class DetailPanel(ttk.Frame):
                 # --- BLOQUE DE SEGURIDAD PARA VERSIONES ANTIGUAS ---
                 print("ADVERTENCIA: Tu versión de PyVista no soporta PBR. Cargando modo simple.")
                 p.clear() # Limpiamos por si acaso
-                p.add_text("Modo Compatibilidad (Sin PBR)", font_size=10, position='upper_left')
+                #p.add_text("Modo Compatibilidad (Sin PBR)", font_size=10, position='upper_left')
                 
                 # Carga estándar (Solo textura base o color blanco)
                 if self.loaded_textures.get("base"):
